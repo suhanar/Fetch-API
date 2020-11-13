@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    Get users Details by clicking the button
+    <button id="fetchbtn">Fetch User</button>
+    <div id="response"></div>
+
+
+    <form id="posttext">
+        <div>
+            <input type="text" id="title" placeholder="title">
+        </div>
+        <div>
+            <textarea name="" id="body" cols="30" rows="10"></textarea>
+        </div>
+        <input type="submit" >
+    </form>
+    
+</body>
+<script>
+    document.getElementById('fetchbtn').addEventListener('click',fetchUser);
+    document.getElementById('posttext').addEventListener('submit',postData);
+    function fetchUser(){
+        fetch('https://jsonplaceholder.typicode.com/users')
+        .then(res=>res.json())
+        .then(users=>{
+            let output = '<h1>Fetch user names</h1>';
+            output += '<ul>';
+            users.forEach(function(user){
+                output +=  `
+                <li>
+                        ${user.name}
+                </li>
+                    
+                    `;
+                   
+            });
+            output+='</ul>'
+            document.getElementById('response').innerHTML=output
+                
+
+            
+
+        });
+    }
+
+    function postData(event){
+        console.log("success")
+        event.preventDefault();
+        let title = document.getElementById('title').value;
+        let body = document.getElementById('body').value;
+        const postBody = {
+            title : title,
+            body : body
+        }
+        fetch('https://jsonplaceholder.typicode.com/posts',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify(postBody)
+        })
+        .then(res=>{
+            if(res.ok){
+                return res.json()
+            }
+            else{
+                return Promise.reject({status : res.status,statusText:res.statusText})
+
+            }
+        })
+        
+        .then(data=>console.log(data))
+        .catch(err=>console.log("error message is",err.status))
+    }
+</script>
+</html>
